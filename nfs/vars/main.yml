@@ -1,0 +1,6 @@
+---
+# vars file for ./nfs
+shared_dir_name: void_drive
+
+
+usb_drive: /dev/sda1 

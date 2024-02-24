@@ -1,0 +1,11 @@
+---
+# handlers file for ./nfs
+
+- name: Restart NFS 
+  service:
+    name: nfs-kernel-server
+    state: restarted
+  become: true
+
+
+

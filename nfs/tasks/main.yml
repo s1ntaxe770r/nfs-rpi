@@ -1,0 +1,52 @@
+---
+# tasks file for ./nfs
+- name: install nfs-kernel  
+  apt:
+    pkg:
+      - nfs-kernel-server
+      - nfs-common
+    update_cache: yes 
+  become: true 
+
+
+- name: create shared mount directory 
+  file:
+    path: "/mnt/{{shared_dir_name}}"
+    state: directory
+  become: true 
+
+
+- name: mount drive to shared directory
+  mount:
+    path: "/mnt/{{shared_dir_name}}"
+    src: "{{usb_drive}}"
+    fstype: ext4 
+    state: present
+  become: true 
+
+- name: Set permissions on shared folder
+  file:
+    path: "/mnt/{{shared_dir_name}}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}" 
+    mode: 644  # Adjust permissions as needed (e.g., 0660, 0755)
+    state: directory
+  become: true 
+
+
+- name: Add line to /etc/exports for NFS share
+  lineinfile:
+    path: /etc/exports
+    line: "/mnt/void_drive *(rw,all_squash,insecure,async,no_subtree_check,anonuid=0,anongid=0)" # considered insecure as this allows everyone to r/w to the drive , however this exactly what i want for my network 
+    state: present
+  become: true  # R
+
+
+- name: Export NFS shares
+  command: exportfs -ra
+  become: true
+  notify: Restart NFS
+
+
+
+
