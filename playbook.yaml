@@ -1,0 +1,7 @@
+---
+- name: Deploy NFS
+  hosts: all 
+  gather_facts: true 
+
+  roles:
+    - role: nfs 
